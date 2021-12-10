@@ -4,7 +4,7 @@
 
 * run `./start <dayname>` i.e `./start day11`
 * Download your puzzle input into the day folder and save as `input.txt`
-* Coding in solution.py 
+* Coding in <dayname>/solution.py 
 * To get result, run:
   python  -m <day>.solution <part>
   For example: `python -m day9.solution part1`
