@@ -1,0 +1,45 @@
+#!/bin/bash
+REGEX_DAY='^day[0-9]{1,2}$'
+if [ ! $1 ] || [[ ! $1 =~ $REGEX_DAY ]]; then
+    echo "Usage: $0 dayname"
+    echo " dayname is in format 'day[0-9]+', i.e day9, day20, ..."
+    echo ""
+    exit 1
+fi
+if [ -d $1 ]; then
+    echo "ERROR: Folder $1 exists"
+    echo ""
+    exit 1
+fi
+
+mkdir $1
+touch $1/__init__.py
+echo "1234567890
+2345678901
+3456789012" > $1/input.txt
+
+echo "import os
+import sys
+
+from aoc import utils
+input_file = os.path.dirname(os.path.realpath(__file__)) + '/input.txt'
+lines = utils.read(input_file)
+height = len(lines)
+width = len(lines[0])
+
+def part1():
+    print(\"result of part1\")
+
+def part2():
+    print(\"result of part2\")
+
+if sys.argv[1]:
+	globals()[sys.argv[1]]()
+" > $1/solution.py
+
+echo "$1 has been created."
+ls -l $1
+echo "You can download your puzzle input to $1/input.txt and start coding in $1/solution.py"
+echo "For testing result, run:"
+echo "  python -m $1.solution part1"
+echo ""
