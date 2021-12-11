@@ -19,15 +19,6 @@ def stepup():
                 fpoints.append([i, j])
     return fpoints
 
-# def check_flash():
-#     fpoints = []
-#     for i in range(height):
-#         for j in range(width):
-#             if lines[i][j] == 10:
-#                 adjacent_inc(i, j)
-#                 fpoints.append([i, j])
-#     return fpoints
-
 def adjacent_inc(i, j):
     if 9 > lines[i][j] > 0:
         lines[i][j] += 1
@@ -64,6 +55,12 @@ def count_flash():
         flash += line.count(0)
     return flash
 
+def puzzle_sum():
+    total = 0
+    for line in lines:
+        total += sum(line)
+    return total
+
 def print_lines(step, flash=0):
     print(f"printing lines at [step={step},flash={flash}]:")
     for line in lines:
@@ -81,7 +78,15 @@ def part1():
     print(f"Total flashes: {total_flash}")
 
 def part2():
-    print("result of part2")
+    total = puzzle_sum()
+    step = 0
+    while total > 0 and step < 5000:
+        step += 1
+        fpoints = stepup()
+        for p in fpoints:
+            adjacent(*p)
+        total = puzzle_sum()
+    print(f"The first step for all flashes is: {step}")
 
 if sys.argv[1]:
 	globals()[sys.argv[1]]()
