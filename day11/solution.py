@@ -1,9 +1,7 @@
-import os
 import sys
 
 from aoc import utils
-input_file = os.path.dirname(os.path.realpath(__file__)) + '/input.txt'
-lines = utils.read(input_file)
+lines = utils.read_puzzle(__file__)
 height = len(lines)
 width = len(lines[0])
 for i in range(height):
