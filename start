@@ -18,12 +18,10 @@ echo "1234567890
 2345678901
 3456789012" > $1/input.txt
 
-echo "import os
-import sys
+echo "import sys
 
 from aoc import utils
-input_file = os.path.dirname(os.path.realpath(__file__)) + '/input.txt'
-lines = utils.read(input_file)
+lines = utils.read_puzzle(__file__)
 height = len(lines)
 width = len(lines[0])
 
