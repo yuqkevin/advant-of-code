@@ -6,7 +6,7 @@ height = len(lines)
 width = len(lines[0])
 
 def add_chain(chain, k, v):
-    if k == 'end' or v == "start" or (k.islower() and k != "start" and v.islower() and v != "end"):
+    if k == 'end' or v == "start":
         return chain
     if k not in chain:
         chain[k] = [v]
@@ -31,11 +31,11 @@ def has_lower(path):
 
 def find_path(chain, parent, path, found_path = []):
     path.append(parent)
-    print(f"extend {path} <- {parent}. check children: {chain[parent]}")
+    # print(f"extend {path} <- {parent}. check children: {chain[parent]}")
     for child in chain[parent]:
-        print(f"{child} -> {path}")
+        # print(f"{child} -> {path}")
         if child == "end":
-            print(f"FOUND PATH: {','.join(path)},end")
+            # print(f"FOUND PATH: {','.join(path)},end")
             found_path.append(f"{','.join(path)},end")
         elif child.islower() and child in path:
             continue
