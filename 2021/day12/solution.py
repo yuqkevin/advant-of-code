@@ -38,6 +38,9 @@ def find_path(chain, parent, path, found_path, p2 = False):
         elif child.islower() and child in path:
             if not p2:
                 continue
+            # # this method much slower than use for loop
+            # if len([x for x in path if x.islower() and path.count(x) > 1]) > 0:
+            #     continue
             stop = False
             for p in path:
                 if p.islower() and path.count(p) > 1:
