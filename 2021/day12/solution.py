@@ -31,11 +31,8 @@ def has_lower(path):
 
 def find_path(chain, parent, path, found_path, p2 = False):
     path.append(parent)
-    # print(f"extend {path} <- {parent}. check children: {chain[parent]}")
     for child in chain[parent]:
-        # print(f"{child} -> {path}")
         if child == "end":
-            # print(f"FOUND PATH: {','.join(path)},end")
             found_path.append(f"{','.join(path)},end")
             continue
         elif child.islower() and child in path:
@@ -59,7 +56,7 @@ def part1():
     # rule1: can not go back to start
     # rule2: visit small caves at most once
     chain = link_caves()
-    print(chain)
+    # print(chain)
     found_path = []
     find_path(chain, "start", [], found_path)
     # print('\n'.join(found_path))
@@ -67,7 +64,7 @@ def part1():
 
 def part2():
     chain = link_caves()
-    print(chain)
+    # print(chain)
     found_path = []
     find_path(chain, "start", [], found_path, True)
     # print('\n'.join(found_path))
