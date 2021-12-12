@@ -42,9 +42,7 @@ def find_path(chain, parent, path, found_path, p2 = False):
                     
         org_path = path.copy()
         find_path(chain, child, path, found_path, p2)
-        path = org_path
-
-        
+        path = org_path    
 
 def part1():
     # rule1: can not go back to start
