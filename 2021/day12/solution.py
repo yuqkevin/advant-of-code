@@ -2,8 +2,6 @@ import sys
 
 from aoc import utils
 lines = utils.read_puzzle(__file__)
-height = len(lines)
-width = len(lines[0])
 
 def add_chain(chain, k, v):
     if k == 'end' or v == "start":
@@ -25,7 +23,7 @@ def link_caves():
 
 def find_path(chain, parent, path, found_path, p2 = False):
     if len(path) == 0:
-        # max lower cave visit times
+        # max lower cave visited times
         path.append(0)
     path.append(parent)
     if parent.islower():
@@ -45,21 +43,15 @@ def find_path(chain, parent, path, found_path, p2 = False):
         path = org_path    
 
 def part1():
-    # rule1: can not go back to start
-    # rule2: visit small caves at most once
     chain = link_caves()
-    # print(chain)
     found_path = []
     find_path(chain, "start", [], found_path)
-    # print('\n'.join(found_path))
     print(f"total found paths: {len(found_path)}")
 
 def part2():
     chain = link_caves()
-    # print(chain)
     found_path = []
     find_path(chain, "start", [], found_path, True)
-    # print('\n'.join(found_path))
     print(f"total found paths: {len(found_path)}")
 
 if sys.argv[1]:
