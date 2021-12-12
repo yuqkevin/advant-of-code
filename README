@@ -2,9 +2,9 @@
 
 ### Start
 
-* run `./start <dayname>` i.e `./start day11`
+* run `./start <year> <dayname>` i.e `./start 2021 day11`
 * Download your puzzle input into the day folder and save as `input.txt`
-* Coding in <dayname>/solution.py 
+* Coding in <year>/<dayname>/solution.py 
 * To get result, run:
-  python  -m <dayname>.solution <part>
-  For example: `python -m day9.solution part1`
+  python  -m <year>.<dayname>.solution <part>
+  For example: `python -m 2021.day9.solution part1`

@@ -1,22 +1,29 @@
 #!/bin/bash
 REGEX_DAY='^day[0-9]{1,2}$'
-if [ ! $1 ] || [[ ! $1 =~ $REGEX_DAY ]]; then
-    echo "Usage: $0 dayname"
-    echo " dayname is in format 'day[0-9]+', i.e day9, day20, ..."
+REGEX_YEAR='^20[0-9]{2}$'
+if [[ ! $1 =~ $REGEX_YEAR ]] || [ ! $2 ] || [[ ! $2 =~ $REGEX_DAY ]]; then
+    echo "Usage: $0 year dayname"
+    echo " year is four digit number, e.g 2021"
+    echo " dayname is in format 'day[0-9]+', e.g. day9, day20, ..."
     echo ""
     exit 1
 fi
-if [ -d $1 ]; then
-    echo "ERROR: Folder $1 exists"
+if [ -d $1/$2 ]; then
+    echo "ERROR: Folder $1/$2 exists"
     echo ""
     exit 1
 fi
+dayfolder=$1/$2
 
-mkdir $1
-touch $1/__init__.py
+mkdir -p $dayfolder
+if [ ! -f "$1/__init__.py" ]; then
+    touch $1/__init__.py
+fi
+touch $dayfolder/__init__.py
+
 echo "1234567890
 2345678901
-3456789012" > $1/input.txt
+3456789012" > $dayfolder/input.txt
 
 echo "import sys
 
@@ -33,11 +40,12 @@ def part2():
 
 if sys.argv[1]:
 	globals()[sys.argv[1]]()
-" > $1/solution.py
+" > $dayfolder/solution.py
 
-echo "$1 has been created."
-ls -l $1
-echo "You can download your puzzle input to $1/input.txt and start coding in $1/solution.py"
-echo "For testing result, run:"
-echo "  python -m $1.solution part1"
+echo "$dayfolder has been created."
+ls -l $dayfolder
+echo "You can download your puzzle input to $dayfolder/input.txt and start coding in $dayfolder/solution.py"
+echo "To get result, run:"
+echo "  python -m $1.$2.solution part1"
+echo "  python -m $1.$2.solution part2"
 echo ""

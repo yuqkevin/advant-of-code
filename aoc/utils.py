@@ -5,3 +5,12 @@ def read_puzzle(caller, puzzle = "input.txt"):
         lines = file.readlines()
         lines = [line.rstrip() for line in lines]
     return lines
+
+def print_lines(lines):
+    for line in lines:
+        print(line)
+
+def print_cells(lines):
+    for line in lines:
+        for c in line:
+            print(c)
