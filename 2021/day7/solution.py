@@ -6,6 +6,11 @@ content = utils.read_content(__file__)
 line1 = content.split(',')
 line = [int(x) for x in line1 ]
 
+# def ordered_pos():
+#     pos_counts = {x: line.count(x) for x in line}
+#     spos = dict(sorted(pos_counts.items(), key=lambda item: item[1]))
+#     return list(reversed(list(spos.keys())))
+
 def compute_fuel(part2 = False):
     counted = []
     min_fuel = 0
