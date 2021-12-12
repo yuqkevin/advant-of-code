@@ -23,30 +23,21 @@ def link_caves():
         link_chain = add_chain(link_chain, b, a)
     return link_chain
 
-def has_lower(path):
-    for n in path:
-        if n != "start" and n.islower():
-            return True
-    return False
-
 def find_path(chain, parent, path, found_path, p2 = False):
+    if len(path) == 0:
+        # max lower cave visit times
+        path.append(0)
     path.append(parent)
+    if parent.islower():
+        path[0] = max(path[0], path.count(parent))
     for child in chain[parent]:
         if child == "end":
-            found_path.append(f"{','.join(path)},end")
+            found_path.append(f"{','.join(path[1:])},end")
             continue
         elif child.islower() and child in path:
             if not p2:
                 continue
-            # # this is method much slower than using for loop
-            # if len([x for x in path if x.islower() and path.count(x) > 1]) > 0:
-            #     continue
-            stop = False
-            for p in path:
-                if p.islower() and path.count(p) > 1:
-                    stop = True
-                    break
-            if stop:
+            if path[0] > 1:
                 continue
                     
         org_path = path.copy()
