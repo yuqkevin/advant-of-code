@@ -2,7 +2,7 @@
 
 ### Start
 
-* run `./start <year> <dayname>` i.e `./start 2021 day11`
+* run `./start <year> <dayname>` e.g `./start 2021 day11`
 * Download your puzzle input into the day folder and save as `input.txt`
 * Coding in <year>/<dayname>/solution.py 
 * To get result, run:
