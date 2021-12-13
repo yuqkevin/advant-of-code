@@ -2,6 +2,7 @@ import sys
 
 from aoc import utils
 lines = utils.read_puzzle(__file__)
+start_time = utils.time_check()
 height = len(lines)
 width = len(lines[0])
 for i in range(height):
@@ -66,14 +67,12 @@ def print_lines(step, flash=0):
 
 def part1():
     total_flash = 0
-    # print_lines(0, total_flash)
     for step in range(100):
         fpoints = stepup()
         for p in fpoints:
             adjacent(*p)
         total_flash += count_flash()
-        # print_lines(step + 1, total_flash)
-    print(f"Total flashes: {total_flash}")
+    return f"Total flashes: {total_flash}"
 
 def part2():
     total = puzzle_sum()
@@ -84,8 +83,19 @@ def part2():
         for p in fpoints:
             adjacent(*p)
         total = puzzle_sum()
-    print(f"The first step for all flashes is: {step}")
+    return f"The first step for all flashes is: {step}"
 
-if sys.argv[1]:
-	globals()[sys.argv[1]]()
+if __name__ == "__main__":
+    result = None
+    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2"]:
+        print("\nSorry, I don't get it, \nI need know which part you want to run, part1 or part2?\n")
+        sys.exit()
+    if sys.argv[1] == "part1":
+        result = part1()
+    else :
+        result = part2()
+        
+    perf  = utils.time_check(start_time)
+    print(result)
+    print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")
 

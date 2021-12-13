@@ -12,7 +12,7 @@ for i in range(height):
     lines[i] = [int(x) for x in ps]
 
 def fold_page(fold, fold_x = False):
-    for i in range(0, height):
+    for i in range(height):
         if fold_x:
             if lines[i][0] > fold:
                 lines[i][0] = fold - (lines[i][0] - fold)
@@ -53,24 +53,26 @@ def part2():
         dots += fold_page(fold[1], fold[0] == "x")
     
     max_x, max_y = max_xy()
+    result = ""
     for y in range(max_y+1):
         for x in range(max_x+1):
             if [x, y] in lines:
-                print('#', end="")
+                result += "#"
             else:
-                print('.', end="")
-        print("")
-    return ""
+                result += " "
+        result += "\n"
+    return result
 
 if __name__ == "__main__":
     result = None
+    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2"]:
+        print("\nSorry, I don't get it, \nI need know which part you want to run, part1 or part2?\n")
+        sys.exit()
     if sys.argv[1] == "part1":
         result = part1()
-    elif sys.argv[1] == "part2":
+    else :
         result = part2()
-    else:
-        print("Sorry, I don't get it, what's your request?\n")
-        sys.exit()
+        
     perf  = utils.time_check(start_time)
     print(result)
-    print(f"Used time of {sys.argv[1]}: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")
+    print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")

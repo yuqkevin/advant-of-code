@@ -2,6 +2,7 @@ import sys
 
 from aoc import utils
 lines = utils.read_puzzle(__file__)
+start_time = utils.time_check()
 height = len(lines)
 width = len(lines[0])
 
@@ -41,7 +42,7 @@ def part1():
 		v = lines[points[i][0]][points[i][1]]
 		risk += (int(v) + 1)
 	
-	print(f"Number of basin bottoms: {len(points)},  total risk: {total_risk}")
+	return f"Number of basin bottoms: {len(points)},  total risk: {total_risk}"
 
 def part2():
 	points = []
@@ -61,7 +62,18 @@ def part2():
 		basins.append(len(basin_points))
 	
 	basins.sort()
-	print(f"Three largest basion: {basins[-3:]}, Sum of their size: {basins[-3]*basins[-2]*basins[-1]}")
+	return f"Three largest basion: {basins[-3:]}, Sum of their size: {basins[-3]*basins[-2]*basins[-1]}"
 	
-if sys.argv[1]:
-	globals()[sys.argv[1]]()
+if __name__ == "__main__":
+    result = None
+    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2"]:
+        print("\nSorry, I don't get it, \nI need know which part you want to run, part1 or part2?\n")
+        sys.exit()
+    if sys.argv[1] == "part1":
+        result = part1()
+    else :
+        result = part2()
+        
+    perf  = utils.time_check(start_time)
+    print(result)
+    print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")

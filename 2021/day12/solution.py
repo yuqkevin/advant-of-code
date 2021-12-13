@@ -2,6 +2,7 @@ import sys
 
 from aoc import utils
 lines = utils.read_puzzle(__file__)
+start_time = utils.time_check()
 
 def add_chain(chain, k, v):
     if k == 'end' or v == "start":
@@ -46,14 +47,24 @@ def part1():
     chain = link_caves()
     found_path = []
     find_path(chain, "start", [], found_path)
-    print(f"total found paths: {len(found_path)}")
+    return f"total found paths: {len(found_path)}"
 
 def part2():
     chain = link_caves()
     found_path = []
     find_path(chain, "start", [], found_path, True)
-    print(f"total found paths: {len(found_path)}")
+    return f"total found paths: {len(found_path)}"
 
-if sys.argv[1]:
-	globals()[sys.argv[1]]()
-
+if __name__ == "__main__":
+    result = None
+    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2"]:
+        print("\nSorry, I don't get it, \nI need know which part you want to run, part1 or part2?\n")
+        sys.exit()
+    if sys.argv[1] == "part1":
+        result = part1()
+    else :
+        result = part2()
+        
+    perf  = utils.time_check(start_time)
+    print(result)
+    print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")

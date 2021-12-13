@@ -2,6 +2,7 @@ import sys
 
 from aoc import utils
 lines = utils.read_puzzle(__file__)
+start_time = utils.time_check()
 height = len(lines)
 width = len(lines[0])
 
@@ -17,15 +18,6 @@ segments = [
     "ABCDEFG",
     "ABCDFG"
 ]
-
-def part1():
-    ucodes = 0
-    for line in lines:
-        digits = line.split('|')[1].split(' ')
-        for d in digits:
-            if len(d) in [2, 3, 4, 7]:
-                ucodes += 1
-    print(f"Total unique codes are: {ucodes}")
 
 def decode(pattern, codes):
     mset = {}
@@ -84,6 +76,15 @@ def get_digits(char_map, codes):
         digits += str(segments.index(smcode))
     return digits
 
+def part1():
+    ucodes = 0
+    for line in lines:
+        digits = line.split('|')[1].split(' ')
+        for d in digits:
+            if len(d) in [2, 3, 4, 7]:
+                ucodes += 1
+    return f"Total unique codes are: {ucodes}"
+
 def part2():
     total = 0
     for line in lines:
@@ -92,8 +93,18 @@ def part2():
         codes = data[1].strip().split(' ')
         digits = decode(pattern, codes)
         total += int(digits)
-    print(f"Sum of codes: {total}")
+    return f"Sum of codes: {total}"
 
-if sys.argv[1]:
-	globals()[sys.argv[1]]()
-
+if __name__ == "__main__":
+    result = None
+    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2"]:
+        print("\nSorry, I don't get it, \nI need know which part you want to run, part1 or part2?\n")
+        sys.exit()
+    if sys.argv[1] == "part1":
+        result = part1()
+    else :
+        result = part2()
+        
+    perf  = utils.time_check(start_time)
+    print(result)
+    print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")

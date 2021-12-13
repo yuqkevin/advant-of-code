@@ -2,6 +2,7 @@ import sys
 
 from aoc import utils
 lines = utils.read_puzzle(__file__)
+start_time = utils.time_check()
 height = len(lines)
 width = len(lines[0])
 
@@ -33,7 +34,7 @@ def part1():
 						break
 			if err:
 				break
-	print(f"score: {score}")
+	return f"score: {score}"
 
 def part2():
 	scores = []
@@ -66,7 +67,18 @@ def part2():
 	mid_key = int(len(scores)/2)
 	scores.sort()
 	#print(scores)
-	print(f"size: {len(scores)}, middle key: {mid_key}, middle score: {scores[mid_key]}")
+	return f"size: {len(scores)}, middle key: {mid_key}, middle score: {scores[mid_key]}"
 	
-if sys.argv[1]:
-	globals()[sys.argv[1]]()
+if __name__ == "__main__":
+    result = None
+    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2"]:
+        print("\nSorry, I don't get it, \nI need know which part you want to run, part1 or part2?\n")
+        sys.exit()
+    if sys.argv[1] == "part1":
+        result = part1()
+    else :
+        result = part2()
+        
+    perf  = utils.time_check(start_time)
+    print(result)
+    print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")

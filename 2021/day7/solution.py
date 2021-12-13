@@ -2,6 +2,7 @@ import sys
 
 from aoc import utils
 content = utils.read_content(__file__)
+start_time = utils.time_check()
 # content = "16,1,2,0,4,2,7,1,2,14"
 line1 = content.split(',')
 line = [int(x) for x in line1 ]
@@ -50,13 +51,24 @@ def compute_min_fuel(points, fuels = {}, part2 = False):
 def part1():
     points = [min(line), int((max(line) + min(line))/2), max(line)]
     result = compute_min_fuel(points)
-    print(f"Part1 min fuel: {result[1]} at position: {result[0]}")
+    return f"Part1 min fuel: {result[1]} at position: {result[0]}"
 
 def part2():
     points = [min(line), int((max(line) + min(line))/2), max(line)]
     result = compute_min_fuel(points, {}, True)
-    print(f"Part2 min fuel: {result[1]} at position: {result[0]}")
+    return f"Part2 min fuel: {result[1]} at position: {result[0]}"
 
-if sys.argv[1]:
-	globals()[sys.argv[1]]()
+if __name__ == "__main__":
+    result = None
+    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2"]:
+        print("\nSorry, I don't get it, \nI need know which part you want to run, part1 or part2?\n")
+        sys.exit()
+    if sys.argv[1] == "part1":
+        result = part1()
+    else :
+        result = part2()
+        
+    perf  = utils.time_check(start_time)
+    print(result)
+    print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")
 
