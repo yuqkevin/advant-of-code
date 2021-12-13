@@ -20,3 +20,9 @@ def print_cells(lines):
     for line in lines:
         for c in line:
             print(c)
+
+def int_lines(lines):
+    height = len(lines)
+    for i in range(height):
+        lines[i] = [int(x) for x in lines[i]]
+    return lines
