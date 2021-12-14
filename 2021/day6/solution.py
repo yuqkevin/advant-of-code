@@ -4,23 +4,24 @@ from aoc import utils
 content = utils.read_content(__file__)
 start_time = utils.time_check()
 content = "3,4,3,1,2"
-days = 18
-fishes = content.split(',')
-fishes = [int(x) for x in fishes]
+days = 256
+sfishes = content.split(',')
+sfishes = [int(x) for x in sfishes]
 
-def next_day():
-    size = len(fishes)
-    for i in range(size):
-        if fishes[i] == 0:
-            fishes[i] = 6
-            fishes.append(8)
-        else:
-            fishes[i] -= 1
-        
+def gen_day(x):
+    if x == 0:
+        return (n for n in [6, 8])
+    else:
+        return (n for n in [x-1])
+
 def part1():
+    fishes = sfishes
     for day in range(days):
-        next_day()
-    return f"There are {len(fishes)} fishes after {days} day"
+        fishes = (y for x in fishes for y in gen_day(x))
+    cnt = 0
+    for fish in fishes:
+        cnt += 1
+    return f"There are {cnt} fishes after {days} day"
 
 def part2():
     return "result of part2"
