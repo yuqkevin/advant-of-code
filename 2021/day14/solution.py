@@ -3,12 +3,14 @@ import sys
 from aoc import utils
 lines = utils.read_puzzle(__file__)
 template = "OOVSKSPKPPPNNFFBCNOV"
+# template = "NNCB"
+size = len(template)
 start_time = utils.time_check()
 height = len(lines)
-cvt_map = {}
+cc_map = {}
 for i in range(height):
     m = lines[i].strip().split(" -> ")
-    cvt_map[m[0]] =  m[1]
+    cc_map[m[0]] =  m[1]
 
 chars = {}
 input = template
@@ -17,31 +19,38 @@ for c in template:
         chars[c] += 1
     else:
         chars[c] = 1
+inc = 0
 
-def insert(input):
-    size = len(input)
-    output = input[0]
-    for i in range(2, size + 1):
-        pair = input[i-2:i]
-        if pair in cvt_map:
-            output += cvt_map[pair]
-            if cvt_map[pair] in chars:
-                chars[cvt_map[pair]] += 1
-            else:
-                chars[cvt_map[pair]] = 1
-        output += input[i-1]
-    return output
+def gen(src):
+    pp = ''
+    cnt = 0
+    for c in src:
+        cnt += 1
+        pp += c
+        if len(pp) > 2:
+            pp = pp[1:]
+        if pp in cc_map:
+            ch = cc_map[pp]
+            chars[ch] = 1 if ch not in chars else (chars[ch] + 1)
+            # print(f"step {step} pos {cnt}-> {pp} insert: yield {ch}")
+            yield ch
+        # print(f"step {step} pos {cnt} ->{pp} origin: yield {c}")
+        yield c
 
-def part1():
-    input = template
-    for i in range(40):
-        input = insert(input)
+
+def part1(step = 10):
+    input = (c for c in template)
+    for i in range(step):
+        # print(f"Started: step {i}")
+        input = (c for c in gen(input))
+    s = sum(1 for _ in input)
+    # print(f"size = {inc}")
     most = max(chars.values())
     least = min(chars.values())
-    return f"part1 result: {most - least}"
+    return f"final size after {step} steps: {s} result: {most - least}"
 
 def part2():
-    return "result of part2"
+    return part1(15)
 
 if __name__ == "__main__":
     result = None
@@ -54,6 +63,6 @@ if __name__ == "__main__":
         result = part2()
         
     perf  = utils.time_check(start_time)
-    print(result)
+    print(f"{sys.argv[1]} {result}")
     print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")
 
