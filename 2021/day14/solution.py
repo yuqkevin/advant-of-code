@@ -50,7 +50,7 @@ def part1(step = 10):
     return f"final size after {step} steps: {s} result: {most - least}"
 
 def part2():
-    return part1(15)
+    return part1(40)
 
 if __name__ == "__main__":
     result = None
