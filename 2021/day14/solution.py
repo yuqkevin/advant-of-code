@@ -37,8 +37,27 @@ def gen(src):
         # print(f"step {step} pos {cnt} ->{pp} origin: yield {c}")
         yield c
 
-
+def queued(queues, ch, q_no, max_q_no):
+    queues[q_no] += ch
+    if len(queues[q_no]) > 2:
+        queues[q_no] = queues[q_no][1:]
+    if queues[q_no] in cc_map:
+        c = cc_map[queues[q_no]]
+        chars[c] = 1 if c not in chars else (chars[c] + 1)
+        if q_no < max_q_no:
+            queued(queues, c, q_no + 1, max_q_no)
+    if q_no < max_q_no:
+        queued(queues, ch, q_no + 1, max_q_no)
+    
 def part1(step = 10):
+    queues = ["" for i in range(step)]
+    for ch in template:
+        queued(queues, ch, 0, step - 1)
+    most = max(chars.values())
+    least = min(chars.values())
+    return most - least      
+
+def part1x(step = 10):
     input = (c for c in template)
     for i in range(step):
         # print(f"Started: step {i}")
@@ -63,6 +82,6 @@ if __name__ == "__main__":
         result = part2()
         
     perf  = utils.time_check(start_time)
-    print(f"{sys.argv[1]} {result}")
+    print(f"{sys.argv[1]} result: {result}")
     print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")
 
