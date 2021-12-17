@@ -63,7 +63,7 @@ def queued(queues, ch, q_no, max_q_no):
 def queue_consumer_thread(idx):
     global cc_map, queues, end_char
     next_idx = None if idx == (len(queues) - 1) else idx + 1
-    print(f"Starting thread {idx}, next thread is {next_idx}")
+    # print(f"Starting thread {idx}, next thread is {next_idx}")
     while True:
         size = len(queues[idx])
         if size == 0:
@@ -76,11 +76,11 @@ def queue_consumer_thread(idx):
         if c == end_char:
             break
         while size < 2:
-            sleep(0.005)
+            # sleep(0.005)
             size = len(queues[idx])
         cc = queues[idx][0:2]
-        if next_idx is None:
-            print(f"Thread {idx} read {cc}")
+        # if next_idx is None:
+        #     print(f"Thread {idx} read {cc}")
         if cc in cc_map:
             c = cc_map[cc]
             chars[c] = 1 if c not in chars else (chars[c] + 1)
@@ -90,7 +90,7 @@ def queue_consumer_thread(idx):
             #     print(c, end='')
         queues[idx] = queues[idx][1:]
 
-def part1(step = 10):
+def part1_t(step = 10):
     global template, chars, queues, end_char
     init(step)
     threads = []
@@ -110,7 +110,9 @@ def part1(step = 10):
     return most - least  
 
 
-def part1y(step = 20):
+def part1_q(step = 10):
+    global template, chars
+    init(step)
     queues = ["" for i in range(step)]
     for ch in template:
         queued(queues, ch, 0, step - 1)
@@ -118,13 +120,13 @@ def part1y(step = 20):
     least = min(chars.values())
     return most - least      
 
-def part1x(step = 10):
+def part1(step = 10):
+    global template, chars
+    init(step)
     input = (c for c in template)
     for i in range(step):
-        # print(f"Started: step {i}")
         input = (c for c in gen(input))
     s = sum(1 for _ in input)
-    # print(f"size = {inc}")
     most = max(chars.values())
     least = min(chars.values())
     return f"final size after {step} steps: {s} result: {most - least}"
