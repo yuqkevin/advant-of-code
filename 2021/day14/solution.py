@@ -1,6 +1,7 @@
 import sys
 import threading
 from time import sleep
+from collections import Counter
 
 from aoc import utils
 lines = utils.read_puzzle(__file__)
@@ -10,7 +11,7 @@ template = "OOVSKSPKPPPNNFFBCNOV"
 start_time = utils.time_check()
 cc_map = {}
 # char frequence counter
-chars = {}
+chars = Counter()
 # process step char stream queues, each queue will be maintained in zise of 2 
 queues = []
 # end character
@@ -109,7 +110,6 @@ def part1_t(step = 10):
     least = min(chars.values())
     return most - least  
 
-
 def part1_q(step = 10):
     global template, chars
     init(step)
@@ -126,10 +126,11 @@ def part1(step = 10):
     input = (c for c in template)
     for i in range(step):
         input = (c for c in gen(input))
-    s = sum(1 for _ in input)
+    # iterate generators
+    sum(1 for _ in input)
     most = max(chars.values())
     least = min(chars.values())
-    return f"final size after {step} steps: {s} result: {most - least}"
+    return most - least
 
 def part2():
     return part1(40)
