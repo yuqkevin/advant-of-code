@@ -1,25 +1,36 @@
 import sys
+import threading
+from time import sleep
 
 from aoc import utils
 lines = utils.read_puzzle(__file__)
 template = "OOVSKSPKPPPNNFFBCNOV"
 # template = "NNCB"
-size = len(template)
+# pattern map
 start_time = utils.time_check()
-height = len(lines)
 cc_map = {}
-for i in range(height):
-    m = lines[i].strip().split(" -> ")
-    cc_map[m[0]] =  m[1]
-
+# char frequence counter
 chars = {}
-input = template
-for c in template:
-    if c in chars:
-        chars[c] += 1
-    else:
-        chars[c] = 1
-inc = 0
+# process step char stream queues, each queue will be maintained in zise of 2 
+queues = []
+# end character
+end_char = "0"
+
+def init(step):
+    global lines, cc_map, chars, queues
+    queues = ["" for i in range(step)]
+    height = len(lines)
+    cc_map = {}
+    for i in range(height):
+        m = lines[i].strip().split(" -> ")
+        cc_map[m[0]] =  m[1]
+
+    chars = {}
+    for c in template:
+        if c in chars:
+            chars[c] += 1
+        else:
+            chars[c] = 1
 
 def gen(src):
     pp = ''
@@ -48,8 +59,58 @@ def queued(queues, ch, q_no, max_q_no):
             queued(queues, c, q_no + 1, max_q_no)
     if q_no < max_q_no:
         queued(queues, ch, q_no + 1, max_q_no)
-    
+
+def queue_consumer_thread(idx):
+    global cc_map, queues, end_char
+    next_idx = None if idx == (len(queues) - 1) else idx + 1
+    print(f"Starting thread {idx}, next thread is {next_idx}")
+    while True:
+        size = len(queues[idx])
+        if size == 0:
+            continue
+        c = queues[idx][0]
+        if next_idx is not None:
+            queues[next_idx] += c
+        # else:
+        #     print(queues[idx][0], end='')
+        if c == end_char:
+            break
+        while size < 2:
+            sleep(0.005)
+            size = len(queues[idx])
+        cc = queues[idx][0:2]
+        if next_idx is None:
+            print(f"Thread {idx} read {cc}")
+        if cc in cc_map:
+            c = cc_map[cc]
+            chars[c] = 1 if c not in chars else (chars[c] + 1)
+            if next_idx is not None:
+                queues[next_idx] += c
+            # else:
+            #     print(c, end='')
+        queues[idx] = queues[idx][1:]
+
 def part1(step = 10):
+    global template, chars, queues, end_char
+    init(step)
+    threads = []
+    for idx in range(step):
+        x = threading.Thread(target=queue_consumer_thread, args=(idx,))
+        x.start()
+        threads.append(x)
+
+    for c in template:
+        queues[0] += c
+    queues[0] += end_char
+
+    for t in threads:
+        t.join()
+    most = max(chars.values())
+    least = min(chars.values())
+    return most - least  
+
+
+def part1y(step = 20):
     queues = ["" for i in range(step)]
     for ch in template:
         queued(queues, ch, 0, step - 1)
@@ -82,6 +143,6 @@ if __name__ == "__main__":
         result = part2()
         
     perf  = utils.time_check(start_time)
-    print(f"{sys.argv[1]} result: {result}")
+    print(f"\n{sys.argv[1]} result: {result}")
     print(f"{sys.argv[1]} time used: {perf['s']} seconds {perf['ms']} ms {perf['µs']} µs {perf['ns']} ns.")
 
