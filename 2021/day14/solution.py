@@ -4,35 +4,17 @@ from time import sleep
 from collections import Counter
 
 from aoc import utils
-lines = utils.read_puzzle(__file__)
-template = "OOVSKSPKPPPNNFFBCNOV"
-# template = "NNCB"
-# pattern map
-start_time = utils.time_check()
-cc_map = {}
-# char frequence counter
-chars = Counter()
-# process step char stream queues, each queue will be maintained in zise of 2 
-queues = []
-# end character
-end_char = "0"
 
-def init(step):
-    global lines, cc_map, chars, queues
+# for generators/queues/threadings methods
+def init(step): 
+    global rules, chars, queues, template, end_char
+    end_char = "0"
+    template, _, *rules = utils.read_puzzle(__file__)
+    rules = {a[0]:a[1] for a in [(lambda x: x.strip().split(" -> "))(x) for x in rules]}
     queues = ["" for i in range(step)]
-    height = len(lines)
-    cc_map = {}
-    for i in range(height):
-        m = lines[i].strip().split(" -> ")
-        cc_map[m[0]] =  m[1]
+    chars = Counter(template)
 
-    chars = {}
-    for c in template:
-        if c in chars:
-            chars[c] += 1
-        else:
-            chars[c] = 1
-
+# deprecated: for generator method only
 def gen(src):
     pp = ''
     cnt = 0
@@ -41,28 +23,28 @@ def gen(src):
         pp += c
         if len(pp) > 2:
             pp = pp[1:]
-        if pp in cc_map:
-            ch = cc_map[pp]
+        if pp in rules:
+            ch = rules[pp]
             chars[ch] = 1 if ch not in chars else (chars[ch] + 1)
-            # print(f"step {step} pos {cnt}-> {pp} insert: yield {ch}")
             yield ch
-        # print(f"step {step} pos {cnt} ->{pp} origin: yield {c}")
         yield c
 
+# deprecated: for queues method only
 def queued(queues, ch, q_no, max_q_no):
     queues[q_no] += ch
     if len(queues[q_no]) > 2:
         queues[q_no] = queues[q_no][1:]
-    if queues[q_no] in cc_map:
-        c = cc_map[queues[q_no]]
+    if queues[q_no] in rules:
+        c = rules[queues[q_no]]
         chars[c] = 1 if c not in chars else (chars[c] + 1)
         if q_no < max_q_no:
             queued(queues, c, q_no + 1, max_q_no)
     if q_no < max_q_no:
         queued(queues, ch, q_no + 1, max_q_no)
 
+# deprecated: for threading method only
 def queue_consumer_thread(idx):
-    global cc_map, queues, end_char
+    global rules, queues, end_char
     next_idx = None if idx == (len(queues) - 1) else idx + 1
     # print(f"Starting thread {idx}, next thread is {next_idx}")
     while True:
@@ -72,25 +54,60 @@ def queue_consumer_thread(idx):
         c = queues[idx][0]
         if next_idx is not None:
             queues[next_idx] += c
-        # else:
-        #     print(queues[idx][0], end='')
         if c == end_char:
             break
         while size < 2:
-            # sleep(0.005)
             size = len(queues[idx])
         cc = queues[idx][0:2]
-        # if next_idx is None:
-        #     print(f"Thread {idx} read {cc}")
-        if cc in cc_map:
-            c = cc_map[cc]
+        if cc in rules:
+            c = rules[cc]
             chars[c] = 1 if c not in chars else (chars[c] + 1)
             if next_idx is not None:
                 queues[next_idx] += c
-            # else:
-            #     print(c, end='')
         queues[idx] = queues[idx][1:]
 
+def parse(temp_str):
+    ch_counter = Counter(temp_str)
+    pairs = Counter()
+    size = len(temp_str)
+    for i in range(size - 1):
+        pair = temp_str[i:(i + 2)]
+        pairs[pair] += 1
+    return [pairs, ch_counter]
+        
+
+def steps(start_str, step, rules):
+    pairs, ch_counter = parse(start_str) 
+       
+    for i in range(step):
+        src_pairs = pairs.copy()
+        for pair in src_pairs:
+            if pair in rules:
+                c = rules[pair]
+                cnt = src_pairs[pair]
+                ch_counter[c] += cnt
+                pairs[f"{pair[0]}{c}"] += cnt
+                pairs[f"{c}{pair[1]}"] += cnt
+                pairs[pair] -= cnt
+    most = ch_counter.most_common()[0][1]
+    least = ch_counter.most_common()[-1][1]
+    return most - least
+
+def test(input = "test-input.txt"):
+    step = 10
+    start_str, _, *rules = utils.read_puzzle(__file__, input)
+    rules = {a[0]:a[1] for a in [(lambda x: x.strip().split(" -> "))(x) for x in rules]}
+    return "pass" if steps(start_str, step, rules) == 1588 else "failed"
+    
+def part1(step = 10):
+    start_str, _, *rules = utils.read_puzzle(__file__)
+    rules = {a[0]:a[1] for a in [(lambda x: x.strip().split(" -> "))(x) for x in rules]}
+    return steps(start_str, step, rules)
+
+def part2():
+    return part1(40)
+
+# deprecated: threadings
 def part1_t(step = 10):
     global template, chars, queues, end_char
     init(step)
@@ -110,6 +127,7 @@ def part1_t(step = 10):
     least = min(chars.values())
     return most - least  
 
+# deprecated: queues
 def part1_q(step = 10):
     global template, chars
     init(step)
@@ -120,7 +138,8 @@ def part1_q(step = 10):
     least = min(chars.values())
     return most - least      
 
-def part1(step = 10):
+# deprecated: generators
+def part1_g(step = 10):
     global template, chars
     init(step)
     input = (c for c in template)
@@ -132,18 +151,18 @@ def part1(step = 10):
     least = min(chars.values())
     return most - least
 
-def part2():
-    return part1(40)
-
 if __name__ == "__main__":
     result = None
-    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2"]:
+    if len(sys.argv) < 2 or sys.argv[1] not in ["part1", "part2", "test"]:
         print("\nSorry, I don't get it, \nI need know which part you want to run, part1 or part2?\n")
         sys.exit()
+    start_time = utils.time_check()
     if sys.argv[1] == "part1":
         result = part1()
-    else :
+    elif sys.argv[1] == "part2":
         result = part2()
+    else:
+        result = test()
         
     perf  = utils.time_check(start_time)
     print(f"\n{sys.argv[1]} result: {result}")
