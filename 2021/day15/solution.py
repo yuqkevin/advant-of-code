@@ -88,6 +88,7 @@ def find_pools(maze, a, b):
     pools = [{tuple(a)}, {tuple(b)}]
     dm = len(maze)
     pointers = [[0, 0], [dm - 1, dm - 1]]
+    borders = set()
     for x in range(a[0], dm):
         for y in range(a[0], dm):
             # print(f"check pt [{x}, {y}] for pool 0")
@@ -101,9 +102,19 @@ def find_pools(maze, a, b):
         for j in range(dm_b):
             x = b[1] - i
             y = b[1] - j
-            if is_for_pool(maze, pools[1], x, y):
-                pools[1].add((x, y))
-                pointers[1] = [min(pointers[1][0], x), min(pointers[1][1], y)]
+            val = maze[x][y]
+            if val < 1 and (x, y) not in pools[1]:
+                neighours = [[min(dm - 1, x + 1), y], [x, min(dm - 1, y + 1)], [max(0, x -1), y], [x, max(0 , y - 1)]]
+                for p in neighours:
+                    if maze[p[0]][p[1]] < 1 and tuple(p) in pools[1]:
+                        pools[1].add([x, y])
+                        pointers[1] = [min(pointers[1][0], x), min(pointers[1][1], y)]
+                    elif maze[p[0]][p[1]] > 0 and (x, y) in pools[1]:
+                        borders.add(tuple(p))
+
+            # if is_for_pool(maze, pools[1], x, y):
+            #     pools[1].add((x, y))
+            #     pointers[1] = [min(pointers[1][0], x), min(pointers[1][1], y)]
             elif x < pointers[1][0] - 1 and y < pointers[1][1] - 1:
                 break
     return (pools, pointers)
@@ -142,7 +153,12 @@ def find_points(maze, a, b):
         print(off_pointers)
         # print_maze(maze)
             
-        
+def find_border(maze, pool, max_x, max_y, reverse = False):
+    dm_x = max_x + 2
+    dm_y = max_y + 2
+    for i in range (dm_x):
+        for j in range(dm_y):
+
      
 def test(input = "test-input.txt"):
     lines = utils.read_puzzle(__file__, input)
