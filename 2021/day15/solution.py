@@ -2,14 +2,107 @@ import sys
 from collections import Counter
 from aoc import utils
 
+def print_maze(maze):
+    for line in maze:
+        for i in line:
+            print(str(max(0, i)) + ' ', end='')
+        print("")
+
+def path_risk(paths, maze):
+    min_risk = 0
+    for path in paths:
+        risk = sum([maze[p[0]][p[1]] for p in path])
+        min_risk = risk if min_risk == 0 else min(min_risk, risk)
+    dm = len(maze)
+    return min_risk - maze[0][0] - maze[dm-1][dm-1]
+    
+
+def find_paths(maze):
+    paths = []
+    stack = []
+    points = []
+    dm = len(maze)
+    x = y = 0
+    cnt = 0
+    step = 6
+    for i in range(step):
+        maze = [(lambda x: [ z - 1 for z in x])(y)  for y in maze]
+    while cnt < 20000 and True:
+        if x == dm - 1 and y == dm - 1:
+            paths.append(points)
+            if len(stack) == 0:
+                break
+        cnt += 1
+        # print(f"cnt={cnt}: [{x}, {y}] {points}, {stack}")
+        val = maze[x][y]
+        if val <= 0:
+            points.append([x, y])
+            # print(f"add point [{x}, {y}]: points={points}")
+            # neighbours
+            # neighours = [[min(dm - 1, x + 1), y], [x, min(dm - 1, y + 1)], [max(0, x -1), y], [x, max(0 , y - 1)]]
+            neighours = [[min(dm - 1, x + 1), y], [x, min(dm - 1, y + 1)]]
+            next_steps = []
+            for p in neighours:
+                if maze[p[0]][p[1]] <= 0 and p not in points:
+                    next_steps.append([p, [x, y]])
+            if len(next_steps):
+                p, _ = next_steps.pop()
+                # print(f"next: {p} and save branch: {next_steps}")
+                stack += next_steps
+                x = p[0]
+                y = p[1]
+                # print(f"stack={stack}")
+                continue
+            elif len(stack) > 0:
+                p, prev = stack.pop()
+                points = points[0:points.index(prev) + 1]
+                # print(f"sliced points to prev={prev}: points={points}")
+                x = p[0]
+                y = p[1]
+            else:
+                break
+    print_maze(maze)
+    
+    # for path in paths:
+        # print(path)
+    print(f"found {len(paths)} paths")
+    return paths
+
+def step(maze):
+    dm = len(maze)
+    
+    points = []
+    cnt = 0
+    while points == [] and cnt < 6:
+        maze = [(lambda x: [ z - 1 for z in x])(y)  for y in maze]
+        cnt += 1
+        for i in range(dm):
+            print_maze(maze)
+            print(f"{i} {points}")
+            y = 0
+            for j in range(i, dm):
+                if maze[i][j] <= 0:
+                    points.append([i, j])
+                    y = j
+                else:
+                    break
+            if points[-1] != [dm -1, dm - 1]:
+                points = []
+                break
+            
+    return points
 
 def test(input = "test-input.txt"):
     maze = utils.read_puzzle(__file__, input)
-    print(maze)
-    pass
+    maze = [(lambda x: [int(z) for z in list(x)])(y)  for y in maze]
+    paths = find_paths(maze.copy())
+    return path_risk(paths, maze)
 
 def part1():
-    pass
+    maze = utils.read_puzzle(__file__)
+    maze = [(lambda x: [int(z) for z in list(x)])(y)  for y in maze]
+    paths = find_paths(maze.copy())
+    return path_risk(paths, maze)
 
 def part2():
     pass
