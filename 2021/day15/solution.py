@@ -69,9 +69,6 @@ def find_paths(maze):
             else:
                 break
     print_maze(maze)
-    
-    # for path in paths:
-        # print(path)
     print(f"found {len(paths)} paths")
     return paths
 
