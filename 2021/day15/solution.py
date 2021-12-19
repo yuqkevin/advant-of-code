@@ -4,6 +4,8 @@ from aoc import utils
 
 
 def test(input = "test-input.txt"):
+    maze = utils.read_puzzle(__file__, input)
+    print(maze)
     pass
 
 def part1():
